@@ -563,7 +563,10 @@ class Request(dict):
  
         defaults.update(parameters)
         parameters = defaults
- 
+
+        if http_url is not None and '&' in http_url: # don't copy params twice
+            parameters = {}
+
         if token:
             parameters['oauth_token'] = token.key
             if token.verifier:
@@ -659,7 +662,9 @@ class Client(httplib2.Http):
             token=self.token, http_method=method, http_url=uri, 
             parameters=parameters, body=body, is_form_encoded=is_form_encoded)
 
-        req.sign_request(self.method, self.consumer, self.token)
+        # don't sign the request twice!
+        if 'oauth_token' not in uri:
+            req.sign_request(self.method, self.consumer, self.token)
 
         schema, rest = urllib.splittype(uri)
         if rest.startswith('//'):
