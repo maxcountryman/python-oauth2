@@ -639,8 +639,9 @@ class Client(httplib2.Http):
 
         self.method = method
 
-    def request(self, uri, method="GET", body='', headers=None, 
-        redirections=httplib2.DEFAULT_MAX_REDIRECTS, connection_type=None):
+    def request(self, uri, method="GET", body='', headers=None,
+            redirections=httplib2.DEFAULT_MAX_REDIRECTS, connection_type=None,
+            parameters=None):
         DEFAULT_POST_CONTENT_TYPE = 'application/x-www-form-urlencoded'
 
         if not isinstance(headers, dict):
@@ -655,8 +656,6 @@ class Client(httplib2.Http):
 
         if is_form_encoded and body:
             parameters = parse_qs(body)
-        else:
-            parameters = None
 
         req = Request.from_consumer_and_token(self.consumer, 
             token=self.token, http_method=method, http_url=uri, 
@@ -685,7 +684,6 @@ class Client(httplib2.Http):
         return httplib2.Http.request(self, uri, method=method, body=body,
             headers=headers, redirections=redirections,
             connection_type=connection_type)
-
 
 class Server(object):
     """A skeletal implementation of a service provider, providing protected
